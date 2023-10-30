@@ -15,7 +15,7 @@ def read_bam():
         desc = "+"
         seq = read1.seq
         qual = read1.qual
-        fastq1 = '\n'.join([str(i) for i in [name, seq, desc, qual]])
+        fastq1 = '\n'.join([str(i) for i in [name, seq, desc, qual]]) # Into fastq format
 
         yield fastq1
 
