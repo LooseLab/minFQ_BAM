@@ -44,5 +44,5 @@ count = 0
 for values in read_bam(bam_file="sort_ds1263_NUH7_M1.sup.meth.hg38.bam"):
     print(*values)
     count += 1
-    if count > 5:
+    if count > 1:
         break
