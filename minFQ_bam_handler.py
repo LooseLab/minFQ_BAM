@@ -2,9 +2,8 @@ import pysam
 
 
 def read_bam(bam_file=None):
+    
     """
-
-
     :param bam_file: A bam format alignment file.
     :return:
         name: sequence name
@@ -20,29 +19,50 @@ def read_bam(bam_file=None):
     """
 
     if bam_file:
-        samfile1 = pysam.AlignmentFile(bam_file, "rb", check_sq=False)
-        sequence_dict = samfile1.header.to_dict()['RG']
+        sam_file = pysam.AlignmentFile(bam_file, "rb", check_sq=False)
+        sequence_dict = sam_file.header.to_dict()['RG']
         # Information from BAM header
         for sequence_info in sequence_dict:
             run_id = sequence_info['ID']
             flow_cell_id = sequence_info['PU']
             start_time = sequence_info['DT']
             basecall_method_run_id = sequence_info['DS']
-        for read1 in samfile1.fetch():
+        for bam_read in sam_file.fetch():
             # From each read
-            name = read1.query_name
-            seq = read1.seq
-            qual = read1.qual
+            name = bam_read.query_name
+            seq = bam_read.seq
+            qual = bam_read.qual
             # Information from BAM tags in each read
-            start_time_pr = read1.get_tag('st')
-            channel = read1.get_tag('ch')
-            read_basecall_id = read1.get_tag('RG')
-            # seq_to_signal = read1.get_tag('mv:B:c')
-            yield name, seq, qual, start_time_pr, channel, read_basecall_id, run_id, flow_cell_id, start_time, basecall_method_run_id
+            start_time_pr = bam_read.get_tag('st')
+            channel = bam_read.get_tag('ch')
+            read_basecall_id = _bam_read.get_tag('RG')
+            # seq_to_signal = bam_read.get_tag('mv:B:c')
+            yield (
+                name,
+                seq,
+                qual,
+                start_time_pr,
+                channel,
+                read_basecall_id,
+                run_id,
+                flow_cell_id,
+                start_time,
+                basecall_method_run_id,
+            )
 
+for (
+    name,
+    seq,
+    qual,
+    start_time_pr,
+    channel,
+    read_basecall_id,
+    run_id,
+    flow_cell_id,
+    start_time,
+    basecall_method_run_id,
+) in read_bam(bam_file="sort_ds1263_NUH7_M1.sup.meth.hg38.bam"):
 
-for name, seq, qual, start_time_pr, channel, read_basecall_id, run_id, flow_cell_id, start_time, basecall_method_run_id in read_bam(
-        bam_file="sort_ds1263_NUH7_M1.sup.meth.hg38.bam"):
 """
 
 Parameters 
@@ -71,6 +91,7 @@ basecall_method_run_id: str
 Returns
 ---------
 """
+
     bam_read = {"read_id": name,
                 "sequence": seq,
                 "sequence_length": len(str(seq)),
@@ -81,4 +102,5 @@ Returns
                 "run_id": run_id,
                 "flow_cell_id": flow_cell_id,
                 "start_time": start_time,
-                "basecall_method_run_id": basecall_method_run_id}
+                "basecall_method_run_id": basecall_method_run_id
+               }
